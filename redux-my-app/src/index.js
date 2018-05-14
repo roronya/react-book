@@ -21,6 +21,18 @@ function tasksReducer(state = initialState, action) {
 	}
 }
 
+function resetReducer(state = initialState, action) {
+	switch (action.type) {
+		case 'RESET_TASK':
+		return {
+			...state,
+			tasks: []
+		};
+		default:
+			return state;
+	}
+}
+
 const store = createStore(tasksReducer);
 
 function handleChange() {
@@ -38,6 +50,18 @@ const addTask = (task) => ({
 });
 
 store.dispatch(addTask('Storeを学ぶ'));
+
+store.replaceReducer(resetReducer);
+
+console.log(store.getState());
+
+const resetTask = () => ({
+	type: 'RESET_TASK'
+})
+
+store.dispatch(resetTask());
+
+console.log(store.getState());
 
 ReactDOM.render(<App />, document.getElementById('root'));
 registerServiceWorker();
