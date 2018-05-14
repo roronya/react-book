@@ -14,7 +14,7 @@ function tasksReducer(state = initialState, action) {
 		case 'ADD_TASK':
 			return {
 				...state,
-				tasks: state.tasks.concat([action.task])
+				tasks: state.tasks.concat([action.payload.task])
 			};
 		default:
 			return state;
@@ -22,6 +22,13 @@ function tasksReducer(state = initialState, action) {
 }
 
 const store = createStore(tasksReducer);
+
+function handleChange() {
+	console.log(store.getState());
+	console.log(store.getState().tasks);
+}
+
+const unsubscribe = store.subscribe(handleChange)
 
 const addTask = (task) => ({
 	type: 'ADD_TASK',
@@ -31,8 +38,6 @@ const addTask = (task) => ({
 });
 
 store.dispatch(addTask('Storeを学ぶ'));
-
-console.log(store.getState());
 
 ReactDOM.render(<App />, document.getElementById('root'));
 registerServiceWorker();
