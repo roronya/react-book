@@ -1,16 +1,19 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+import { render } from 'react-dom';
 import {createStore} from 'redux';
 
 const initialState = {
+	task: '',
 	tasks: []
 };
 
 function tasksReducer(state = initialState, action) {
 	switch (action.type) {
+		case 'INPUT_TASK':
+			return {
+				...state,
+				task: action.payload.task
+			};
 		case 'ADD_TASK':
 			return {
 				...state,
@@ -21,26 +24,14 @@ function tasksReducer(state = initialState, action) {
 	}
 }
 
-function resetReducer(state = initialState, action) {
-	switch (action.type) {
-		case 'RESET_TASK':
-		return {
-			...state,
-			tasks: []
-		};
-		default:
-			return state;
-	}
-}
-
 const store = createStore(tasksReducer);
 
-function handleChange() {
-	console.log(store.getState());
-	console.log(store.getState().tasks);
-}
-
-const unsubscribe = store.subscribe(handleChange)
+const inputTask = (task) => ({
+	type: 'INPUT_TASK',
+	payload: {
+		task
+	}
+});
 
 const addTask = (task) => ({
 	type: 'ADD_TASK',
@@ -49,19 +40,31 @@ const addTask = (task) => ({
 	}
 });
 
-store.dispatch(addTask('Storeを学ぶ'));
+function TodoApp({ store }) {
+	const {task, tasks } = store.getState();
+	return (
+		<div>
+			<input type="text" onChange={(e) => store.dispatch(inputTask(e.target.value))} />
+			<input type="button" value="add" onClick={() => store.dispatch(addTask(task))} />
+			<ul>
+				{
+					tasks.map(function(item, i) {
+						return (
+							<li key={i}>{item}</li>
+						);
+					})
+				}
+			</ul>
+		</div>
+	)
+}
 
-store.replaceReducer(resetReducer);
+function renderApp(store) {
+	render(
+		<TodoApp store={store} />,
+		document.getElementById('root')
+	);
+}
 
-console.log(store.getState());
-
-const resetTask = () => ({
-	type: 'RESET_TASK'
-})
-
-store.dispatch(resetTask());
-
-console.log(store.getState());
-
-ReactDOM.render(<App />, document.getElementById('root'));
-registerServiceWorker();
+store.subscribe(() => renderApp(store));
+renderApp(store);
