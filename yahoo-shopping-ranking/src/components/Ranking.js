@@ -10,7 +10,7 @@ export default function Ranking({ categoryId }) {
 	)
 }
 
-Ranking.prop.Types = {
+Ranking.propTypes = {
 	categoryId: PropTypes.string
 };
 
